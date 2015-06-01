@@ -98,18 +98,11 @@ if (!$questionnaire->is_active()) {
     } else {
         $msg = 'notavail';
     }
-    echo '<div class="alert alert-warning">'
-    .get_string($msg, 'questionnaire')
-    .'</div>';
-
+    echo $OUTPUT->notification(get_string($msg, 'questionnaire'), 'notifywarning');
 } else if (!$questionnaire->is_open()) {
-    echo '<div class="alert alert-warning">'
-    .get_string('notopen', 'questionnaire', userdate($questionnaire->opendate))
-    .'</div>';
+    echo $OUTPUT->notification(get_string('notopen', 'questionnaire', userdate($questionnaire->opendate)), 'notifywarning');
 } else if ($questionnaire->is_closed()) {
-    echo '<div class="alert alert-warning">'
-    .get_string('closed', 'questionnaire', userdate($questionnaire->closedate))
-    .'</div>';
+    echo $OUTPUT->notification(get_string('closed', 'questionnaire', userdate($questionnaire->closedate)), 'notifywarning');
 } else if ($questionnaire->survey->realm == 'template') {
     print_string('templatenotviewable', 'questionnaire');
     echo $OUTPUT->box_end();
@@ -117,7 +110,7 @@ if (!$questionnaire->is_active()) {
     exit();
 } else if (!$questionnaire->user_is_eligible($USER->id)) {
     if ($questionnaire->questions) {
-        echo '<div class="alert alert-error">'.get_string('noteligible', 'questionnaire').'</div>';
+        echo $OUTPUT->notification(get_string('noteligible', 'questionnaire'));
     }
 } else if (!$questionnaire->user_can_take($USER->id)) {
     switch ($questionnaire->qtype) {
@@ -134,7 +127,7 @@ if (!$questionnaire->is_active()) {
             $msgstring = '';
             break;
     }
-    echo ('<div class="alert alert-error">'.get_string("alreadyfilled", "questionnaire", $msgstring).'</div>');
+    echo $OUTPUT->notification(get_string("alreadyfilled", "questionnaire", $msgstring));
 } else if ($questionnaire->user_can_take($USER->id)) {
     $select = 'survey_id = '.$questionnaire->survey->id.' AND username = \''.$USER->id.'\' AND complete = \'n\'';
     $resume = $DB->get_record_select('questionnaire_response', $select, null) !== false;
@@ -149,7 +142,7 @@ if (!$questionnaire->is_active()) {
     }
 }
 if ($questionnaire->is_active() && !$questionnaire->questions) {
-    echo '<div class="alert alert-warning">'.get_string('noneinuse', 'questionnaire').'</div>';
+    echo $OUTPUT->notification(get_string('noneinuse', 'questionnaire'), 'notifywarning');
 }
 if ($questionnaire->is_active() && $questionnaire->capabilities->editquestions && !$questionnaire->questions) { // Sanity check.
     echo '<a href="'.$CFG->wwwroot.htmlspecialchars('/mod/questionnaire/questions.php?'.

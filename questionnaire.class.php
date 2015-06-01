@@ -145,21 +145,13 @@ class questionnaire {
         // Print the main part of the page.
 
         if (!$this->is_active()) {
-            echo '<div class="alert alert-error">'
-            .get_string('notavail', 'questionnaire')
-            .'</div>';
+            echo $OUTPUT->notification(get_string('notavail', 'questionnaire'));
         } else if (!$this->is_open()) {
-                echo '<div class="alert alert-error">'
-                .get_string('notopen', 'questionnaire', userdate($this->opendate))
-                .'</div>';
+            echo $OUTPUT->notification(get_string('notopen', 'questionnaire', userdate($this->opendate)));
         } else if ($this->is_closed()) {
-            echo '<div class="alert alert-error">'
-            .get_string('closed', 'questionnaire', userdate($this->closedate))
-            .'</div>';
+            echo $OUTPUT->notification(get_string('closed', 'questionnaire', userdate($this->closedate)));
         } else if (!$this->user_is_eligible($USER->id)) {
-            echo '<div class="alert alert-error">'
-            .get_string('noteligible', 'questionnaire')
-            .'</div>';
+            echo $OUTPUT->notification(get_string('noteligible', 'questionnaire'));
         } else if ($this->user_can_take($USER->id)) {
             $sid = $this->sid;
             $quser = $USER->id;
@@ -246,7 +238,7 @@ class questionnaire {
                     $msgstring = '';
                     break;
             }
-            echo ('<div class="alert alert-error">'.get_string("alreadyfilled", "questionnaire", $msgstring).'</div>');
+            echo $OUTPUT->notification(get_string('alreadyfilled', 'questionnaire', $msgstring));
         }
 
         // Finish the page.
@@ -529,7 +521,7 @@ class questionnaire {
     // Display Methods.
 
     public function print_survey($userid=false, $quser) {
-        global $SESSION, $DB, $CFG;
+        global $SESSION, $DB, $CFG, $OUTPUT;
 
         $formdata = new stdClass();
         if (data_submitted() && confirm_sesskey()) {
@@ -683,13 +675,14 @@ class questionnaire {
 
             return $msg;
         } else {
-            echo '<div class="alert alert-warning">'.get_string('noneinuse', 'questionnaire').'</div>';
+            echo $OUTPUT->notification(get_string('noneinuse', 'questionnaire'), 'notifymessage');
             echo '</form>';
             echo '</div>';
         }
     }
 
     private function survey_render($section = 1, $message = '', &$formdata) {
+        global $OUTPUT;
 
         $this->usehtmleditor = null;
 
@@ -699,7 +692,7 @@ class questionnaire {
         $numsections = isset($this->questionsbysec) ? count($this->questionsbysec) : 0;
         if ($section > $numsections) {
             $formdata->sec = $numsections;
-            echo '<div class="alert alert-error">'.get_string('finished', 'questionnaire').'</div>';
+            echo $OUTPUT->notification(get_string('finished', 'questionnaire'));
             return(false);  // Invalid section.
         }
 
@@ -840,7 +833,7 @@ class questionnaire {
         }
 
         if ($message) {
-            echo '<div class="alert alert-error">'.$message.'</div>';
+            echo $OUTPUT->notification($message);
         }
     }
 
@@ -915,7 +908,7 @@ class questionnaire {
                     if ($numsections > 1) {
                         $pageerror = get_string('page', 'questionnaire').' '.$s.' : ';
                     }
-                    echo '<div class="alert alert-error">'.$pageerror.$errormessage.'</div>';
+                    echo $OUTPUT->notification($pageerror.$errormessage);
                     $errors++;
                 }
                 $s ++;
@@ -932,7 +925,7 @@ class questionnaire {
                 $descendantsandchoices = questionnaire_get_descendants_and_choices($this->questions);
         }
         if ($errors == 0) {
-            echo '<div class="alert alert-success">'.get_string('submitpreviewcorrect', 'questionnaire').'</div>';
+            echo $OUTPUT->notification(get_string('submitpreviewcorrect', 'questionnaire'), 'notifysuccess');
         }
 
         $page = 1;

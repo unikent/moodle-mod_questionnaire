@@ -643,7 +643,8 @@ if ($action == "confirmdelquestion" || $action == "confirmdelquestionparent") {
     if ($action == "confirmdelquestionparent") {
         $strnum = get_string('position', 'questionnaire');
         $qid = key($qformdata->removebutton);
-        $msg .= '<div class="alert alert-warning">'.get_string('confirmdelchildren', 'questionnaire').'</div><br />';
+        $msg .= $OUTPUT->notification(get_string('confirmdelchildren', 'questionnaire'), 'notifywarning');
+        $msg .= '<br />';
         foreach ($haschildren as $child) {
             $childname = '';
             if ($child['name']) {
