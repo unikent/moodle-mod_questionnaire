@@ -1699,7 +1699,7 @@ class questionnaire {
 
     private function response_select($rid, $col = null, $csvexport = false, $choicecodes=0, $choicetext=1) {
         global $DB;
-        $qqc_cache = cache::make_from_params(cache_store::MODE_REQUEST, 'core', 'qqc',
+        $cache = cache::make_from_params(cache_store::MODE_REQUEST, 'core', 'qqc',
                 array(), array('simplekeys' => true));
 
         $sid = $this->survey->id;
@@ -1752,14 +1752,14 @@ class questionnaire {
                 $qtype = $row->q_type;
                 if ($csvexport) {
                     static $i = 1;
-                    $qrecords = $qqc_cache->get($qid);
+                    $qrecords = $cache->get($qid);
                     if (!$qrecords) {
                         $qrecords = $DB->get_records('questionnaire_quest_choice', array('question_id' => $qid));
                         if (!$qrecords) {
                             // Ensure query isn't repeatedly run
                             $qrecords = array();
                         }
-                        $qqc_cache->set($qid, $qrecords);
+                        $cache->set($qid, $qrecords);
                     }
                     foreach ($qrecords as $value) {
                         if ($value->id == $cid) {
@@ -1818,7 +1818,7 @@ class questionnaire {
                 foreach ($records as $qid => $row) {
                     if ($row->qid != $oldqid) {
                         $oldqid = $row->qid;
-                        $temp = $qqc_cache->get($row->qid);
+                        $temp = $cache->get($row->qid);
                         if (!$temp) {
                             $qids2[] = $row->qid;
                         } else {
@@ -1831,11 +1831,11 @@ class questionnaire {
                     list($qsql, $params) = $DB->get_in_or_equal($qids2);
                     $sql = 'SELECT * FROM {questionnaire_quest_choice} WHERE question_id '. $qsql . 'ORDER BY id';
                     $temp1 = $DB->get_records_sql($sql, $params);
-                    foreach($temp1 as $id => $data) {
+                    foreach ($temp1 as $id => $data) {
                         $results[$data->question_id][$id] = $data;
                     }
-                    foreach($results as $id => $data) {
-                        $qqc_cache->set($id, $data);
+                    foreach ($results as $id => $data) {
+                        $cache->set($id, $data);
                     }
                     $records2 = $records2 + $temp1;
                 }
