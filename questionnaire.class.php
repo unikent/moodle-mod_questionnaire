@@ -1829,7 +1829,7 @@ class questionnaire {
                 if (!empty($qids2)) {
                     $results = array();
                     list($qsql, $params) = $DB->get_in_or_equal($qids2);
-                    $sql = 'SELECT * FROM {questionnaire_quest_choice} WHERE question_id '. $qsql . 'ORDER BY id';
+                    $sql = 'SELECT * FROM {questionnaire_quest_choice} WHERE question_id '. $qsql . ' ORDER BY id';
                     $temp1 = $DB->get_records_sql($sql, $params);
                     foreach ($temp1 as $id => $data) {
                         $results[$data->question_id][$id] = $data;
